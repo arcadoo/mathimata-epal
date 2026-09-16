@@ -65,6 +65,12 @@
     padding:10px 16px;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
   .bar span{font-size:14px;color:#c9d2de}
   .done{background:var(--mint-t);border-radius:10px;padding:16px;margin-top:10px}
+  table.data{width:100%;border-collapse:collapse;margin:10px 0;font-size:15px}
+  table.data th,table.data td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  table.data th{background:#eef1f5}
+  table.data td.k{font:600 15px/1.4 Consolas,monospace;white-space:nowrap}
+  .tbl-scroll{overflow-x:auto}
+  a{color:var(--cyan)}
   @media print{.bar,button{display:none}body{background:#fff}}
 </style>
 </head>
@@ -172,14 +178,65 @@
 </section>
 
 <section class="card">
-  <h3>Β2. Τι κρύβει το όνομα του επεξεργαστή</h3>
-  <p style="margin-top:0">Στο <b>Intel Core i5-8400</b>: «Intel» η εταιρεία, «Core i5» η σειρά, «8» η γενιά, «400» το μοντέλο.
-     Ψάξε «intel processor number» (ή «amd ryzen naming») και συμπλήρωσε για τον δικό σου.</p>
-  <div class="grid2">
+  <h3>Β2. Διάβασε το όνομα του επεξεργαστή σου</h3>
+  <p style="margin-top:0">Το όνομα δεν είναι τυχαίος κωδικός. Κάθε κομμάτι του λέει κάτι —
+     και χωρίς αυτά τα κομμάτια, το σκέτο «i7» σε μια αγγελία δεν σημαίνει τίποτα.</p>
+  <div class="tbl-scroll"><table class="data">
+    <tr><th>Κομμάτι</th><th>Παράδειγμα</th><th>Τι σημαίνει</th></tr>
+    <tr><td>Εταιρεία</td><td class="k">Intel · AMD</td><td>Ποιος τον κατασκεύασε.</td></tr>
+    <tr><td>Σειρά</td><td class="k">Core i5 · Ryzen 5</td>
+        <td>Το «σκαλί»: i3 και Ryzen 3 βασικά, i5 και Ryzen 5 μεσαία, i7 / i9 και Ryzen 7 / 9 ανώτερα.</td></tr>
+    <tr><td>Γενιά</td><td class="k">i5-<b>8</b>400</td>
+        <td>Το πρώτο ψηφίο του αριθμού. Όσο μεγαλύτερο, τόσο νεότερος ο σχεδιασμός.</td></tr>
+    <tr><td>Μοντέλο</td><td class="k">i5-8<b>400</b></td>
+        <td>Η θέση του μέσα στη γενιά. Μεγαλύτερος αριθμός, δυνατότερος επεξεργαστής.</td></tr>
+    <tr><td>Γράμμα στο τέλος</td><td class="k">i5-8400<b>K</b></td>
+        <td>Η παραλλαγή. Δες τον επόμενο πίνακα.</td></tr>
+  </table></div>
+
+  <p style="margin-bottom:4px"><b>Τα συχνότερα γράμματα της Intel:</b></p>
+  <div class="tbl-scroll"><table class="data">
+    <tr><th>Γράμμα</th><th>Τι σημαίνει</th></tr>
+    <tr><td class="k">K</td><td>Ξεκλείδωτο — μπορεί να δουλέψει πάνω από την εργοστασιακή του ταχύτητα (overclocking).</td></tr>
+    <tr><td class="k">F</td><td>Δεν έχει ενσωματωμένα γραφικά. Χρειάζεται οπωσδήποτε ξεχωριστή κάρτα γραφικών.</td></tr>
+    <tr><td class="k">U</td><td>Χαμηλή κατανάλωση, για λεπτά φορητά με μεγάλη διάρκεια μπαταρίας.</td></tr>
+    <tr><td class="k">H</td><td>Υψηλή απόδοση σε φορητό. Πιο δυνατός, αλλά ζεσταίνεται και τρώει μπαταρία.</td></tr>
+    <tr><td class="k">T</td><td>Επιτραπέζιος χαμηλής ισχύος, για μικρά κουτιά και γραφεία.</td></tr>
+  </table></div>
+
+  <ol class="steps">
+    <li>Πάρε το όνομα του επεξεργαστή σου από το Α1 και σπάσ' το στα κομμάτια του, παρακάτω.</li>
+    <li>Αν έχει γράμμα που δεν υπάρχει στον πίνακα, άνοιξε την επίσημη σελίδα της Intel:
+        <a href="https://www.intel.com/content/www/us/en/processors/processor-numbers.html"
+           target="_blank" rel="noopener">intel.com — Processor Names and Numbers</a></li>
+    <li>Αν έχεις AMD, ψάξε στο διαδίκτυο «amd ryzen naming».</li>
+  </ol>
+  <p class="tip">Από το 2023 η Intel άλλαξε τη μορφή των ονομάτων — τα καινούρια γράφονται π.χ.
+     «Core Ultra 7 155H», χωρίς το «i». Η λογική παραμένει ίδια: σειρά, γενιά, μοντέλο, γράμμα.</p>
+
+  <div class="grid2" style="margin-top:14px">
     <div class="field"><label>Εταιρεία</label><input type="text" id="b2_et"></div>
     <div class="field"><label>Σειρά</label><input type="text" id="b2_seira"></div>
     <div class="field"><label>Γενιά</label><input type="text" id="b2_genia"></div>
     <div class="field"><label>Μοντέλο</label><input type="text" id="b2_mont"></div>
+  </div>
+  <div class="field"><label>Γράμμα στο τέλος (αν υπάρχει) και τι σημαίνει</label>
+    <input type="text" id="b2_gramma"></div>
+
+  <div class="note" style="background:var(--amber-t)">
+    <b style="color:var(--amber)">Η ερώτηση που αξίζει:</b>
+    ποιος είναι πιο γρήγορος, ένας <b>Core i7 8ης γενιάς</b> ή ένας <b>Core i5 12ης γενιάς</b>;
+    <div class="match" style="margin-top:10px">
+      <div>Η απάντησή μου:</div>
+      <select id="b2_quiz">
+        <option value="">— διάλεξε —</option>
+        <option value="i7">Ο i7 8ης γενιάς</option>
+        <option value="i5">Ο i5 12ης γενιάς</option>
+        <option value="depends">Δεν το ξέρω μόνο από το όνομα</option>
+      </select>
+    </div>
+    <p style="margin:10px 0 0"><button onclick="checkB2()">Έλεγξε</button></p>
+    <div class="fb" id="fb_b2"></div>
   </div>
 </section>
 
@@ -288,6 +345,24 @@ function checkMatch(){
   if (ok === total){ fb.className = "fb ok"; fb.textContent = "Σωστά και τα τέσσερα. Μπράβο."; }
   else if (ok === 0){ fb.className = "fb no"; fb.textContent = "Κανένα σωστό ακόμα — ξαναδιάβασε τις προτάσεις και δοκίμασε πάλι."; }
   else { fb.className = "fb no"; fb.textContent = ok + " στα 4 σωστά. Ξαναδές τα: " + miss.join(", ") + "."; }
+  save();
+}
+
+/* ---------- Β2 ---------- */
+function checkB2(){
+  var v = document.getElementById("b2_quiz").value;
+  var fb = document.getElementById("fb_b2");
+  if (!v){ fb.className = "fb"; fb.textContent = "Διάλεξε πρώτα μία απάντηση."; return; }
+  if (v === "depends"){
+    fb.className = "fb ok";
+    fb.textContent = "Ακριβώς αυτό. Στην πράξη ο i5 12ης γενιάς κερδίζει σχεδόν πάντα — τέσσερις γενιές διαφορά μετράνε περισσότερο από το «σκαλί» της σειράς. Αλλά σίγουρος γίνεσαι μόνο συγκρίνοντάς τους σε benchmark, όπως έκανες στο Β1.";
+  } else if (v === "i5"){
+    fb.className = "fb ok";
+    fb.textContent = "Σωστά στην πράξη: οι τέσσερις γενιές διαφορά μετράνε περισσότερο από το «σκαλί» της σειράς. Η πιο σωστή απάντηση όμως είναι «δεν το ξέρω μόνο από το όνομα» — γι' αυτό υπάρχουν τα benchmark.";
+  } else {
+    fb.className = "fb no";
+    fb.textContent = "Είναι η παγίδα. Το «i7» ακούγεται ανώτερο, αλλά τέσσερις γενιές διαφορά το ξεπερνούν. Και πάλι: σίγουρος γίνεσαι μόνο με σύγκριση σε benchmark.";
+  }
   save();
 }
 
