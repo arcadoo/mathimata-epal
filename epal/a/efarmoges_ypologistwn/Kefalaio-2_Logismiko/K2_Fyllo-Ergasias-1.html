@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Φύλλο Εργασίας 1 — Το λογισμικό του υπολογιστή μου</title>
+<style>
+  :root{
+    --ink:#171b22; --muted:#5a6472; --line:#dfe3e9; --paper:#ffffff; --bg:#f6f7f9;
+    --mint:#00784f; --mint-t:#eaf7f0; --amber:#9a6300; --amber-t:#fff5e3;
+    --coral:#c23a22; --coral-t:#fff1ee; --cyan:#0369a1; --cyan-t:#e8f6fd;
+    --viol:#5b3fd1; --viol-t:#f1edfe;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.6 Calibri,Candara,Segoe UI,system-ui,sans-serif}
+  .wrap{max-width:900px;margin:0 auto;padding:24px 16px 80px}
+  header.top{background:#12151c;color:#fff;border-radius:12px;padding:24px;margin-bottom:20px}
+  header.top h1{margin:0 0 6px;font-size:26px;line-height:1.25}
+  header.top p{margin:0;color:#c9d2de;font-size:14px}
+  .idrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .idrow input{flex:1 1 200px}
+  input[type=text],input[type=number],textarea,select{
+    width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;
+    background:var(--paper);color:var(--ink);font:inherit;font-size:16px}
+  textarea{min-height:76px;resize:vertical}
+  input:focus,textarea:focus,select:focus{outline:3px solid #cfe9ff;border-color:#7fb9e6}
+  section.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;
+    padding:20px;margin-bottom:18px}
+  .lvl{display:flex;align-items:center;gap:12px;margin:34px 0 14px}
+  .lvl .b{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;
+    color:#fff;font-weight:700;font-size:20px;flex:none}
+  .lvl h2{margin:0;font-size:19px}
+  .lvl small{display:block;font-weight:400;color:var(--muted);font-size:14px}
+  .A .b{background:var(--mint)} .A h2{color:var(--mint)}
+  .B .b{background:var(--amber)} .B h2{color:var(--amber)}
+  .C .b{background:var(--coral)} .C h2{color:var(--coral)}
+  h3{margin:0 0 10px;font-size:17px}
+  ol.steps{margin:0 0 16px;padding-left:22px}
+  ol.steps li{margin-bottom:7px}
+  kbd{background:#eef1f5;border:1px solid #d3d9e0;border-bottom-width:2px;border-radius:5px;
+    padding:1px 7px;font:600 14px/1.4 Consolas,monospace}
+  code{background:#eef1f5;border-radius:5px;padding:2px 7px;font:600 15px/1.4 Consolas,monospace}
+  .field{margin-bottom:12px}
+  .field label{display:block;font-weight:600;margin-bottom:5px;font-size:15px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  @media(max-width:620px){.grid2,.grid3{grid-template-columns:1fr}}
+  .note{background:var(--cyan-t);border-radius:10px;padding:14px 16px;font-size:15px;margin:14px 0}
+  .note b{color:var(--cyan)}
+  .tip{color:var(--muted);font-size:14px;font-style:italic;margin:8px 0 0}
+  .match{display:grid;grid-template-columns:1fr 220px;gap:10px;align-items:center;margin-bottom:8px}
+  @media(max-width:620px){.match{grid-template-columns:1fr}}
+  button{font:inherit;font-weight:600;border:0;border-radius:8px;padding:10px 18px;
+    background:var(--ink);color:#fff;cursor:pointer}
+  button.ghost{background:#eef1f5;color:var(--ink)}
+  button:hover{opacity:.9}
+  .fb{margin-top:10px;font-weight:600;font-size:15px;min-height:22px}
+  .fb.ok{color:var(--mint)} .fb.no{color:var(--coral)}
+  .detector{background:#12151c;color:#d7dee8;border-radius:10px;padding:16px 18px;
+    font:15px/1.9 Consolas,monospace;overflow-x:auto}
+  .detector b{color:#00d68f;font-weight:600}
+  .calc{background:var(--amber-t);border-radius:10px;padding:16px}
+  .calc .out{font:700 17px/1.6 Consolas,monospace;color:var(--amber);margin-top:8px;white-space:pre-line}
+  .bar{position:fixed;left:0;right:0;bottom:0;background:#12151c;color:#fff;
+    padding:10px 16px;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+  .bar span{font-size:14px;color:#c9d2de}
+  .done{background:var(--mint-t);border-radius:10px;padding:16px;margin-top:10px}
+  table.data{width:100%;border-collapse:collapse;margin:10px 0;font-size:15px}
+  table.data th,table.data td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:middle}
+  table.data th{background:#eef1f5}
+  table.data input{padding:7px 9px;font-size:15px}
+  .tbl-scroll{overflow-x:auto}
+  a{color:var(--cyan)}
+  @media print{.bar,button{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>Φύλλο Εργασίας 1 — Το λογισμικό του υπολογιστή μου</h1>
+  <p>Εφαρμογές Πληροφορικής · Α΄ Εσπερινού ΕΠΑ.Λ. · Κεφάλαιο 2: Λογισμικό · 1η διδακτική ώρα</p>
+  <div class="idrow">
+    <input type="text" id="onoma" placeholder="Το ονοματεπώνυμό μου">
+    <input type="text" id="thesi" placeholder="Αριθμός θέσης στο εργαστήριο">
+  </div>
+</header>
+
+<div class="note">
+  <b>Πώς δουλεύουμε:</b> γράφεις τις απαντήσεις μέσα στα πλαίσια. Το <b>ΜΕΡΟΣ Α</b> το κάνουμε όλοι.
+  Το Β και το Γ όποιος προλάβει. <b>Καμία από τις εντολές που θα δώσεις σήμερα δεν αλλάζει τίποτα
+  στον υπολογιστή — μόνο διαβάζουν.</b> Οι απαντήσεις αποθηκεύονται μόνες τους.
+</div>
+
+<!-- ================= Α ================= -->
+<div class="lvl A"><div class="b">Α</div>
+  <h2>ΜΕΡΟΣ Α — Τι λογισμικό έχω<small>Το κάνουμε όλοι · περίπου 10 λεπτά</small></h2></div>
+
+<section class="card">
+  <h3>Α1. Ποιο λειτουργικό σύστημα έχω;</h3>
+  <ol class="steps">
+    <li>Πάτησε <kbd>Windows</kbd> + <kbd>R</kbd>. Ανοίγει το παράθυρο «Εκτέλεση».</li>
+    <li>Γράψε μέσα: <code>winver</code> και πάτησε <kbd>Enter</kbd>.</li>
+    <li>Ανοίγει το παράθυρο «Σχετικά με τα Windows». Αντίγραψε από εκεί:</li>
+  </ol>
+  <div class="grid3">
+    <div class="field"><label>Όνομα ΛΣ (π.χ. Windows 11)</label><input type="text" id="a1_os"></div>
+    <div class="field"><label>Έκδοση (π.χ. 23H2)</label><input type="text" id="a1_ver"></div>
+    <div class="field"><label>Αριθμός έκδοσης / Build</label><input type="text" id="a1_build"></div>
+  </div>
+  <p>Τώρα πάτησε <kbd>Windows</kbd> + <kbd>I</kbd> → «Σύστημα» → «Πληροφορίες» (τελευταίο στη λίστα):</p>
+  <div class="grid2">
+    <div class="field"><label>Έκδοση των Windows (Home, Pro…)</label><input type="text" id="a1_ed"></div>
+    <div class="field"><label>Ημερομηνία εγκατάστασης</label><input type="text" id="a1_date"></div>
+  </div>
+</section>
+
+<section class="card">
+  <h3>Α2. Τι τρέχει αυτή τη στιγμή;</h3>
+  <ol class="steps">
+    <li>Πάτησε <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Esc</kbd>. Ανοίγει η «Διαχείριση εργασιών».</li>
+    <li>Αν το παράθυρο είναι μικρό, πάτησε «Περισσότερες λεπτομέρειες».</li>
+    <li>Καρτέλα «Διεργασίες» → κλικ στην κεφαλίδα «Μνήμη» για να ταξινομηθούν.</li>
+  </ol>
+  <div class="grid2">
+    <div class="field"><label>Πόσες διεργασίες τρέχουν συνολικά;</label><input type="number" id="a2_n"></div>
+    <div class="field"><label>Ποια εφαρμογή τρώει την περισσότερη μνήμη;</label><input type="text" id="a2_top"></div>
+    <div class="field"><label>Πόση μνήμη χρησιμοποιεί;</label><input type="text" id="a2_mem"></div>
+    <div class="field"><label>Τι ποσοστό της ΚΜΕ χρησιμοποιείται τώρα;</label><input type="text" id="a2_cpu"></div>
+  </div>
+  <div class="field"><label>Διάλεξε μία διεργασία με όνομα που δεν αναγνωρίζεις, ψάξε το στο διαδίκτυο. Τι είναι;</label>
+    <textarea id="a2_unknown"></textarea></div>
+
+  <div class="note" style="background:#12151c">
+    <p style="margin:0 0 10px;color:#fff;font-weight:600">Βοήθημα: τι λογισμικό βλέπει ο browser</p>
+    <div class="detector" id="det">…</div>
+    <p class="tip" style="color:#8f9aaa">Ο browser είναι κι αυτός λογισμικό εφαρμογών — και τρέχει πάνω
+      στο λειτουργικό σύστημα. Να τι ξέρει για τον εαυτό του και για το ΛΣ κάτω από αυτόν.</p>
+  </div>
+</section>
+
+<section class="card">
+  <h3>Α3. Πόσα προγράμματα είναι εγκατεστημένα;</h3>
+  <ol class="steps">
+    <li>Πάτησε <kbd>Windows</kbd> + <kbd>I</kbd> → «Εφαρμογές» → «Εγκατεστημένες εφαρμογές».</li>
+    <li>Στην κορυφή γράφει πόσες είναι συνολικά.</li>
+    <li>Διάλεξε πέντε από τη λίστα και συμπλήρωσε τον πίνακα.</li>
+  </ol>
+  <div class="field" style="max-width:340px"><label>Πόσες συνολικά;</label><input type="number" id="a3_total"></div>
+  <div class="tbl-scroll"><table class="data">
+    <tr><th style="width:32%">Όνομα εφαρμογής</th><th style="width:40%">Σε τι χρησιμεύει</th><th>Συστήματος ή εφαρμογών;</th></tr>
+    <tr><td><input type="text" id="a3_n1"></td><td><input type="text" id="a3_u1"></td>
+        <td><select id="a3_k1"><option value="">—</option><option>Συστήματος</option><option>Εφαρμογών</option></select></td></tr>
+    <tr><td><input type="text" id="a3_n2"></td><td><input type="text" id="a3_u2"></td>
+        <td><select id="a3_k2"><option value="">—</option><option>Συστήματος</option><option>Εφαρμογών</option></select></td></tr>
+    <tr><td><input type="text" id="a3_n3"></td><td><input type="text" id="a3_u3"></td>
+        <td><select id="a3_k3"><option value="">—</option><option>Συστήματος</option><option>Εφαρμογών</option></select></td></tr>
+    <tr><td><input type="text" id="a3_n4"></td><td><input type="text" id="a3_u4"></td>
+        <td><select id="a3_k4"><option value="">—</option><option>Συστήματος</option><option>Εφαρμογών</option></select></td></tr>
+    <tr><td><input type="text" id="a3_n5"></td><td><input type="text" id="a3_u5"></td>
+        <td><select id="a3_k5"><option value="">—</option><option>Συστήματος</option><option>Εφαρμογών</option></select></td></tr>
+  </table></div>
+</section>
+
+<section class="card">
+  <h3>Α4. Ταίριαξε τον όρο με τη δουλειά του</h3>
+  <div class="match"><div>α. Το κομμάτι του ΛΣ που κάνει όλη τη δουλειά και δεν το βλέπουμε ποτέ.</div>
+    <select id="m1"><option value="">— διάλεξε —</option><option>Λειτουργικό Σύστημα</option><option>Πυρήνας</option><option>Φλοιός</option><option>Οδηγός συσκευής</option></select></div>
+  <div class="match"><div>β. Το κομμάτι που βλέπουμε και πατάμε — παράθυρα ή γραμμή εντολών.</div>
+    <select id="m2"><option value="">— διάλεξε —</option><option>Λειτουργικό Σύστημα</option><option>Πυρήνας</option><option>Φλοιός</option><option>Οδηγός συσκευής</option></select></div>
+  <div class="match"><div>γ. Μοιράζει μνήμη και χρόνο επεξεργαστή στα προγράμματα που τρέχουν.</div>
+    <select id="m3"><option value="">— διάλεξε —</option><option>Λειτουργικό Σύστημα</option><option>Πυρήνας</option><option>Φλοιός</option><option>Οδηγός συσκευής</option></select></div>
+  <div class="match"><div>δ. Μικρό πρόγραμμα που ξέρει να μιλάει με μια συγκεκριμένη συσκευή, π.χ. τον εκτυπωτή.</div>
+    <select id="m4"><option value="">— διάλεξε —</option><option>Λειτουργικό Σύστημα</option><option>Πυρήνας</option><option>Φλοιός</option><option>Οδηγός συσκευής</option></select></div>
+  <p><button onclick="checkMatch()">Έλεγξε τις απαντήσεις μου</button></p>
+  <div class="fb" id="fb_match"></div>
+</section>
+
+<!-- ================= Β ================= -->
+<div class="lvl B"><div class="b">Β</div>
+  <h2>ΜΕΡΟΣ Β — Ο άλλος φλοιός<small>Αν προλαβαίνεις · περίπου 7 λεπτά</small></h2></div>
+
+<section class="card">
+  <h3>Β1. Μιλώντας στον υπολογιστή με εντολές</h3>
+  <p style="margin-top:0">Μέχρι τώρα χρησιμοποίησες το γραφικό περιβάλλον. Τώρα θα δεις τον άλλο φλοιό.
+     <b>Καμία από τις εντολές δεν αλλάζει τίποτα</b> — μόνο εμφανίζουν πληροφορίες.</p>
+  <ol class="steps">
+    <li>Πάτησε <kbd>Windows</kbd> + <kbd>R</kbd>, γράψε <code>cmd</code> και <kbd>Enter</kbd>. Ανοίγει ένα μαύρο παράθυρο.</li>
+    <li>Γράψε <code>ver</code> και <kbd>Enter</kbd>.</li>
+    <li>Γράψε <code>dir</code> και <kbd>Enter</kbd>.</li>
+    <li>Γράψε <code>tasklist</code> και <kbd>Enter</kbd>.</li>
+    <li>Γράψε <code>exit</code> και <kbd>Enter</kbd> για να κλείσει.</li>
+  </ol>
+  <div class="field"><label>Τι εμφάνισε η εντολή ver;</label><input type="text" id="b1_ver"></div>
+  <div class="field"><label>Τι σου θυμίζει η λίστα της εντολής dir;</label><input type="text" id="b1_dir"></div>
+  <div class="field"><label>Με ποια καρτέλα της Διαχείρισης Εργασιών μοιάζει η tasklist;</label><input type="text" id="b1_task"></div>
+  <div class="field"><label>Ποιος φλοιός σου φάνηκε πιο εύκολος; Και γιατί υπάρχει ακόμα ο δεύτερος;</label>
+    <textarea id="b1_why"></textarea></div>
+</section>
+
+<section class="card">
+  <h3>Β2. Θα έτρεχε το AutoCAD σε αυτόν τον υπολογιστή;</h3>
+  <p style="margin-top:0">Δραστηριότητα του βιβλίου. Άνοιξε το <b>autodesk.com</b>, βρες το AutoCAD και ψάξε
+     τις «System requirements». Σύγκρινε με το Α1 και με το Φύλλο 1 του Κεφαλαίου 1.</p>
+  <div class="tbl-scroll"><table class="data">
+    <tr><th style="width:24%">Απαίτηση</th><th>Τι ζητάει το AutoCAD</th><th>Τι έχει ο υπολογιστής μου</th><th style="width:15%">Περνάει;</th></tr>
+    <tr><td>Λειτουργικό σύστημα</td><td><input type="text" id="b2_r1"></td><td><input type="text" id="b2_m1"></td>
+        <td><select id="b2_p1"><option value="">—</option><option>Ναι</option><option>Όχι</option></select></td></tr>
+    <tr><td>Επεξεργαστής</td><td><input type="text" id="b2_r2"></td><td><input type="text" id="b2_m2"></td>
+        <td><select id="b2_p2"><option value="">—</option><option>Ναι</option><option>Όχι</option></select></td></tr>
+    <tr><td>Μνήμη RAM</td><td><input type="text" id="b2_r3"></td><td><input type="text" id="b2_m3"></td>
+        <td><select id="b2_p3"><option value="">—</option><option>Ναι</option><option>Όχι</option></select></td></tr>
+    <tr><td>Χώρος δίσκου</td><td><input type="text" id="b2_r4"></td><td><input type="text" id="b2_m4"></td>
+        <td><select id="b2_p4"><option value="">—</option><option>Ναι</option><option>Όχι</option></select></td></tr>
+  </table></div>
+  <div class="field"><label>Συμπέρασμα: θα μπορούσαμε να το εγκαταστήσουμε εδώ; Τεκμηρίωσε.</label>
+    <textarea id="b2_sum"></textarea></div>
+</section>
+
+<section class="card">
+  <h3>Β3. Τα λειτουργικά συστήματα γύρω μου</h3>
+  <div class="grid2">
+    <div class="field"><label>Το κινητό μου τηλέφωνο</label><input type="text" id="b3_1"></div>
+    <div class="field"><label>Ο υπολογιστής του σπιτιού μου</label><input type="text" id="b3_2"></div>
+    <div class="field"><label>Μια έξυπνη τηλεόραση</label><input type="text" id="b3_3"></div>
+    <div class="field"><label>Ένα ΑΤΜ ή μια ταμειακή μηχανή</label><input type="text" id="b3_4"></div>
+  </div>
+</section>
+
+<!-- ================= Γ ================= -->
+<div class="lvl C"><div class="b">Γ</div>
+  <h2>ΜΕΡΟΣ Γ — Πρόκληση<small>Για όποιον τελείωσε γρήγορα</small></h2></div>
+
+<section class="card">
+  <h3>Γ1. Ποιο είδος ΛΣ χρειάζεται;</h3>
+  <div class="match"><div>α. Ο αερόσακος πρέπει να ανοίξει μέσα σε συγκεκριμένα χιλιοστά του δευτερολέπτου.</div>
+    <select id="o1"><option value="">— διάλεξε —</option><option>Πραγματικού χρόνου</option><option>Πολλών χρηστών</option><option>Πολυδιεργασιακό</option><option>Κατανεμημένο</option><option>Ενσωματωμένο</option></select></div>
+  <div class="match"><div>β. Ένα κέντρο δεδομένων με χίλιους υπολογιστές που δουλεύουν σαν ένας.</div>
+    <select id="o2"><option value="">— διάλεξε —</option><option>Πραγματικού χρόνου</option><option>Πολλών χρηστών</option><option>Πολυδιεργασιακό</option><option>Κατανεμημένο</option><option>Ενσωματωμένο</option></select></div>
+  <div class="match"><div>γ. Ο υπολογιστής σου με browser, Word και μουσική ταυτόχρονα.</div>
+    <select id="o3"><option value="">— διάλεξε —</option><option>Πραγματικού χρόνου</option><option>Πολλών χρηστών</option><option>Πολυδιεργασιακό</option><option>Κατανεμημένο</option><option>Ενσωματωμένο</option></select></div>
+  <div class="match"><div>δ. Το πλυντήριο ρούχων, με ελάχιστη μνήμη και μία μόνο δουλειά.</div>
+    <select id="o4"><option value="">— διάλεξε —</option><option>Πραγματικού χρόνου</option><option>Πολλών χρηστών</option><option>Πολυδιεργασιακό</option><option>Κατανεμημένο</option><option>Ενσωματωμένο</option></select></div>
+  <div class="match"><div>ε. Ένας εξυπηρετητής όπου συνδέονται πενήντα υπάλληλοι.</div>
+    <select id="o5"><option value="">— διάλεξε —</option><option>Πραγματικού χρόνου</option><option>Πολλών χρηστών</option><option>Πολυδιεργασιακό</option><option>Κατανεμημένο</option><option>Ενσωματωμένο</option></select></div>
+  <p><button onclick="checkOS()">Έλεγξε τις απαντήσεις μου</button></p>
+  <div class="fb" id="fb_os"></div>
+</section>
+
+<section class="card">
+  <h3>Γ2. Πόσο κοστίζει το λογισμικό;</h3>
+  <p style="margin-top:0">Ψάξε τιμές (skroutz.gr ή τις επίσημες σελίδες) και συμπλήρωσε.</p>
+  <div class="grid3">
+    <div class="field"><label>Άδεια Windows Home (€, μία φορά)</label><input type="number" step="0.01" id="c2_win"></div>
+    <div class="field"><label>Microsoft 365 (€ ανά έτος)</label><input type="number" step="0.01" id="c2_365"></div>
+    <div class="field"><label>LibreOffice (€)</label><input type="number" step="0.01" id="c2_lo"></div>
+  </div>
+  <div class="calc"><b>Σε βάθος πενταετίας:</b>
+    <div class="out" id="c2_out">Συμπλήρωσε την ετήσια τιμή του Microsoft 365.</div></div>
+</section>
+
+<section class="card">
+  <h3>Γ3. Μέχρι πότε θα υποστηρίζεται;</h3>
+  <p style="margin-top:0">Ψάξε «Windows 10 end of support» ή «κύκλος ζωής Windows».</p>
+  <div class="field"><label>Η έκδοση αυτού του υπολογιστή υποστηρίζεται μέχρι…</label><input type="text" id="c3_date"></div>
+  <div class="field"><label>Τι σημαίνει πρακτικά να σταματήσουν οι ενημερώσεις ασφαλείας;</label>
+    <textarea id="c3_why"></textarea></div>
+</section>
+
+<div class="done">
+  <b>Τελείωσες και το Γ;</b>
+  <ol style="margin:8px 0 0;padding-left:22px">
+    <li>Γίνε βοηθός σε κάποιον που είναι ακόμα στο Μέρος Α — εξηγώντας, χωρίς να πιάσεις το ποντίκι του.</li>
+    <li>Στη Γραμμή Εντολών δοκίμασε την εντολή <code>systeminfo</code>. Βγάζει σε μία οθόνη σχεδόν όλα
+        όσα ψάξαμε στο Μέρος Α. Πόσο πιο γρήγορο ήταν;</li>
+  </ol>
+  <div class="field" style="margin-top:12px"><textarea id="extra"></textarea></div>
+</div>
+
+</div>
+
+<div class="bar">
+  <button onclick="copyAll()">Αντιγραφή απαντήσεων</button>
+  <button class="ghost" onclick="window.print()">Εκτύπωση / PDF</button>
+  <button class="ghost" onclick="clearAll()">Καθαρισμός</button>
+  <span id="status">Οι απαντήσεις αποθηκεύονται αυτόματα.</span>
+</div>
+
+<script>
+var KEY = "k2_fyllo1";
+
+(function detect(){
+  var n = navigator, L = [];
+  var ua = n.userAgent || "";
+  var os = /Windows NT 10/.test(ua) ? "Windows 10 ή 11" :
+           /Windows/.test(ua) ? "Windows (παλαιότερο)" :
+           /Mac OS X/.test(ua) ? "macOS" : /Android/.test(ua) ? "Android" :
+           /Linux/.test(ua) ? "Linux" : "δεν το αναγνωρίζω";
+  var br = /Edg\//.test(ua) ? "Microsoft Edge" : /Chrome\//.test(ua) ? "Google Chrome" :
+           /Firefox\//.test(ua) ? "Mozilla Firefox" : /Safari\//.test(ua) ? "Safari" : "άλλος";
+  L.push("Λειτουργικό σύστημα : <b>" + os + "</b>");
+  L.push("Φυλλομετρητής       : <b>" + br + "</b>");
+  L.push("Πυρήνες που βλέπει  : <b>" + (n.hardwareConcurrency || "δεν το λέει") + "</b>");
+  L.push("Γλώσσα              : <b>" + (n.language || "—") + "</b>");
+  L.push(" ");
+  L.push("Ο browser είναι λογισμικό <b>εφαρμογών</b>.");
+  L.push("Τρέχει πάνω στο λογισμικό <b>συστήματος</b>.");
+  document.getElementById("det").innerHTML = L.join("<br>");
+})();
+
+var SWSTO = { m1:"Πυρήνας", m2:"Φλοιός", m3:"Λειτουργικό Σύστημα", m4:"Οδηγός συσκευής" };
+function checkMatch(){
+  var ok = 0, bad = [], letters = { m1:"α", m2:"β", m3:"γ", m4:"δ" };
+  for (var id in SWSTO){
+    if (document.getElementById(id).value === SWSTO[id]) ok++; else bad.push(letters[id]);
+  }
+  var fb = document.getElementById("fb_match");
+  if (ok === 4){ fb.className = "fb ok";
+    fb.textContent = "Σωστά και τα τέσσερα. Θυμήσου: ο πυρήνας δουλεύει, ο φλοιός μιλάει."; }
+  else { fb.className = "fb no";
+    fb.textContent = ok + " στα 4 σωστά. Ξαναδές τα: " + bad.join(", ") + "."; }
+  save();
+}
+
+var OSK = { o1:"Πραγματικού χρόνου", o2:"Κατανεμημένο", o3:"Πολυδιεργασιακό",
+            o4:"Ενσωματωμένο", o5:"Πολλών χρηστών" };
+function checkOS(){
+  var ok = 0, bad = [], letters = { o1:"α", o2:"β", o3:"γ", o4:"δ", o5:"ε" };
+  for (var id in OSK){
+    if (document.getElementById(id).value === OSK[id]) ok++; else bad.push(letters[id]);
+  }
+  var fb = document.getElementById("fb_os");
+  if (ok === 5){ fb.className = "fb ok";
+    fb.textContent = "Πέντε στα πέντε. Το είδος του ΛΣ το καθορίζει η δουλειά που θα κάνει."; }
+  else { fb.className = "fb no";
+    fb.textContent = ok + " στα 5 σωστά. Ξαναδές τα: " + bad.join(", ") + "."; }
+  save();
+}
+
+function num(id){ return parseFloat(document.getElementById(id).value); }
+function updC2(){
+  var y = num("c2_365"), out = document.getElementById("c2_out");
+  if (!y){ out.textContent = "Συμπλήρωσε την ετήσια τιμή του Microsoft 365."; return; }
+  var five = y * 5;
+  out.textContent = "Microsoft 365: " + y.toFixed(2).replace(".", ",") + " € × 5 χρόνια = "
+    + five.toFixed(2).replace(".", ",") + " €\nLibreOffice σε πέντε χρόνια: 0 €\n"
+    + "Διαφορά: " + five.toFixed(2).replace(".", ",") + " €";
+}
+
+function fields(){ return Array.prototype.slice.call(document.querySelectorAll("input,textarea,select")); }
+function save(){
+  try { var o = {}; fields().forEach(function(f){ if (f.id) o[f.id] = f.value; });
+    localStorage.setItem(KEY, JSON.stringify(o));
+    document.getElementById("status").textContent = "Αποθηκεύτηκε.";
+  } catch(e){ document.getElementById("status").textContent =
+    "Δεν γίνεται αυτόματη αποθήκευση — πάτα «Αντιγραφή απαντήσεων»."; }
+}
+function load(){
+  try { var o = JSON.parse(localStorage.getItem(KEY) || "{}");
+    fields().forEach(function(f){ if (f.id && o[f.id] != null) f.value = o[f.id]; }); } catch(e){}
+}
+function clearAll(){
+  if (!confirm("Να σβηστούν όλες οι απαντήσεις;")) return;
+  try { localStorage.removeItem(KEY); } catch(e){}
+  fields().forEach(function(f){ f.value = ""; });
+  document.getElementById("fb_match").textContent = "";
+  document.getElementById("fb_os").textContent = "";
+}
+function copyAll(){
+  var lines = ["ΦΥΛΛΟ ΕΡΓΑΣΙΑΣ 1 — Το λογισμικό του υπολογιστή μου (Κεφάλαιο 2)", ""];
+  document.querySelectorAll("section.card, .done").forEach(function(sec){
+    var h = sec.querySelector("h3"); if (h) lines.push("== " + h.textContent + " ==");
+    sec.querySelectorAll("input,textarea,select").forEach(function(f){
+      var lab = f.previousElementSibling && f.previousElementSibling.tagName === "LABEL"
+        ? f.previousElementSibling.textContent : "";
+      if (f.tagName === "SELECT" && f.parentElement.classList.contains("match")){
+        lines.push(f.parentElement.firstElementChild.textContent + "  →  " + (f.value || "—"));
+      } else if (f.value) lines.push((lab ? lab + ": " : "") + f.value);
+    });
+    lines.push("");
+  });
+  var txt = "Όνομα: " + (document.getElementById("onoma").value || "—")
+    + "   Θέση: " + (document.getElementById("thesi").value || "—") + "\n\n" + lines.join("\n");
+  var ta = document.createElement("textarea");
+  ta.value = txt; document.body.appendChild(ta); ta.select();
+  try { document.execCommand("copy");
+    document.getElementById("status").textContent = "Αντιγράφηκαν! Άνοιξε το Word ή το e-mail σου και πάτα Ctrl + V."; }
+  catch(e){ document.getElementById("status").textContent = "Επίλεξε το κείμενο και αντίγραψέ το με Ctrl + C."; }
+  document.body.removeChild(ta);
+}
+
+load(); updC2();
+fields().forEach(function(f){
+  f.addEventListener("input", function(){ save(); updC2(); });
+  f.addEventListener("change", function(){ save(); updC2(); });
+});
+</script>
+</body>
+</html>
