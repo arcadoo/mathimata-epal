@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="el"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Διάγνωση βλαβών</title>
+<style>
+:root{--dark:#0F1B2D;--dark2:#1B2A41;--green:#16A34A;--g2:#22C55E;--amber:#F59E0B;--red:#DC2626;--light:#F4F6F9;--ink:#1E293B;--muted:#64748B}
+*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Calibri,Arial,sans-serif;background:var(--light);color:var(--ink);font-size:19px}
+header{background:var(--dark);color:#fff;padding:18px 28px}header h1{margin:0;font-size:24px}
+main{max-width:980px;margin:24px auto;padding:0 16px}
+.card{background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.08);padding:24px;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.sc{cursor:pointer;border:2px solid transparent}.sc:hover{border-color:var(--g2)}
+.tag{display:inline-block;font-size:14px;font-weight:700;padding:3px 10px;border-radius:20px;background:#DCFCE7;color:#166534}.tag.exp{background:#FEE2E2;color:#991B1B}
+.ticket{background:var(--dark2);color:#fff;border-radius:12px;padding:16px 20px;margin:10px 0 18px;line-height:1.45}
+.ticket small{color:#94A3B8;font-weight:700;letter-spacing:1px}
+.node{display:flex;gap:14px;align-items:flex-start}
+.diamond{flex:0 0 46px;height:46px;background:var(--amber);transform:rotate(45deg);border-radius:6px;margin:10px}
+.q{font-size:22px;font-weight:700}
+.obs{background:#E0F2FE;border-radius:10px;padding:12px 16px;margin:12px 0;font-size:18px}
+.btn{background:var(--green);color:#fff;border:0;border-radius:10px;padding:12px 22px;font-size:18px;cursor:pointer;font-family:inherit;margin:6px 6px 0 0}
+.btn.sec{background:#475569}.btn.no{background:var(--red)}.btn.blue{background:#0369A1}
+.path{font-size:15px;color:var(--muted);margin-top:12px}
+.checks button{display:block;width:100%;text-align:left;background:#fff;border:2px solid #CBD5E1;border-radius:10px;padding:11px 16px;margin:8px 0;font-size:17px;cursor:pointer;font-family:inherit}
+.checks button:hover:not(:disabled){border-color:#0369A1}.checks button:disabled{background:#F1F5F9;color:#475569;cursor:default}
+.log div{background:#E0F2FE;border-radius:10px;padding:10px 14px;margin:8px 0;font-size:17px}
+.log b{display:block;font-size:15px;color:#0369A1}
+.diag button{display:block;width:100%;text-align:left;background:#fff;border:2px solid #CBD5E1;border-radius:10px;padding:11px 16px;margin:8px 0;font-size:17px;cursor:pointer;font-family:inherit}
+.diag button.bad{border-color:var(--red);background:#FEE2E2}
+.msg{border-radius:12px;padding:14px 18px;margin-top:10px}.msg.good{background:#DCFCE7}.msg.bad{background:#FEE2E2}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media(max-width:760px){.two{grid-template-columns:1fr}}
+.big{font-size:48px;font-weight:800;color:var(--green)}
+</style></head><body>
+<header><h1>🔧 Διάγνωση βλαβών · Σκέψου σαν τεχνικός</h1></header>
+<main id="app"></main>
+<script>
+// ---------- Σενάρια με διάγραμμα ροής (καθοδηγούμενα) ----------
+const GUIDED=[
+{title:"1 · Ο υπολογιστής δεν ανοίγει",ticket:"Κατάστημα ρούχων: «Πατάμε το κουμπί και ο υπολογιστής δεν ανοίγει καθόλου. Χθες δούλευε κανονικά.»",
+ start:"a",nodes:{
+ a:{q:"Ανάβει κάποιο λαμπάκι ή γυρίζει ανεμιστήρας όταν πατάς το κουμπί;",check:"Πατάς το κουμπί και κοιτάς το κουτί",obs:"Τίποτα. Ούτε λαμπάκι, ούτε θόρυβος από ανεμιστήρα.",ans:"no",yes:null,no:"b"},
+ b:{q:"Είναι το καλώδιο ρεύματος σφιχτά συνδεδεμένο και στις δύο άκρες;",check:"Ελέγχεις το καλώδιο πίσω στο κουτί και στην πρίζα",obs:"Ναι, είναι καλά συνδεδεμένο και στις δύο άκρες.",ans:"yes",yes:"c",no:null},
+ c:{q:"Έχει ρεύμα η πρίζα / το πολύπριζο;",check:"Κοιτάς το πολύπριζο και τη λάμπα γραφείου που είναι στο ίδιο πολύπριζο",obs:"Το λαμπάκι του πολύπριζου είναι αναμμένο και η λάμπα του γραφείου ανάβει κανονικά.",ans:"yes",yes:"d",no:null},
+ d:{q:"Ο διακόπτης στο πίσω μέρος του τροφοδοτικού είναι στη θέση «Ι»;",check:"Κοιτάς τον μικρό διακόπτη δίπλα στο καλώδιο ρεύματος, πίσω στο κουτί",obs:"Είναι στη θέση «Ο». Η υπάλληλος λέει ότι χθες το βράδυ καθάρισαν πίσω από το γραφείο.",ans:"no",yes:null,no:"END"}},
+ solution:"Ο διακόπτης του τροφοδοτικού είχε γυρίσει στο «Ο» κατά τον καθαρισμό. Τον γυρνάς στο «Ι» και ο υπολογιστής ανοίγει. Μην ξεχάσεις τα βήματα 4 και 5: έλεγξε ότι λειτουργεί και κατάγραψε το περιστατικό."},
+{title:"2 · Μαύρη οθόνη",ticket:"Γραφείο ασφαλειών: «Μετακομίσαμε τον υπολογιστή σε άλλο γραφείο. Ανοίγει, αλλά η οθόνη μένει μαύρη.»",
+ start:"a",nodes:{
+ a:{q:"Είναι αναμμένο το λαμπάκι της οθόνης;",check:"Κοιτάς κάτω δεξιά στο πλαίσιο της οθόνης",obs:"Ναι, είναι πορτοκαλί. Η οθόνη γράφει για λίγο «No signal» και μετά σβήνει.",ans:"yes",yes:"b",no:null},
+ b:{q:"Λειτουργεί ο υπολογιστής (λαμπάκια, ανεμιστήρες);",check:"Κοιτάς και ακούς το κουτί του υπολογιστή",obs:"Ναι, το λαμπάκι είναι αναμμένο και οι ανεμιστήρες γυρίζουν.",ans:"yes",yes:"c",no:null},
+ c:{q:"Είναι το καλώδιο της οθόνης στη σωστή υποδοχή;",check:"Κοιτάς πού είναι συνδεδεμένο το καλώδιο HDMI πίσω στο κουτί",obs:"Το HDMI είναι στην πάνω υποδοχή (της μητρικής). Πιο κάτω υπάρχει ξεχωριστή κάρτα γραφικών με δικές της υποδοχές.",ans:"no",yes:null,no:"END"}},
+ solution:"Μετά τη μετακόμιση το καλώδιο μπήκε στην υποδοχή της μητρικής. Όταν υπάρχει ξεχωριστή κάρτα γραφικών, η οθόνη συνδέεται σε αυτή. Το ίδιο πρόβλημα δείχνει και το διάγραμμα ροής του βιβλίου (Σχ. 1.2)."}
+];
+// ---------- Σενάρια για ειδικούς (ελεύθερη διερεύνηση) ----------
+const EXPERT=[
+{title:"3 · «Δεν έχουμε ίντερνετ»",ticket:"Φροντιστήριο: «Κανένας υπολογιστής δεν έχει ίντερνετ από το πρωί. Έχουμε μάθημα σε 1 ώρα!»",best:3,
+ checks:[
+  ["Κοιτάς το εικονίδιο δικτύου κάτω δεξιά σε έναν υπολογιστή","Γράφει «Συνδέθηκε, χωρίς Internet».",0],
+  ["Επανεκκινείς έναν υπολογιστή","Τίποτα δεν αλλάζει. Πάλι χωρίς Internet.",0],
+  ["Δοκιμάζεις ένα κινητό στο ίδιο Wi-Fi","Ούτε το κινητό έχει Internet, αλλά βλέπει το δίκτυο.",1],
+  ["Κοιτάς τα λαμπάκια του router","Το λαμπάκι «Internet» αναβοσβήνει κόκκινο. Τα λαμπάκια Wi-Fi και LAN είναι πράσινα.",1],
+  ["Τρέχεις ipconfig σε έναν υπολογιστή","IPv4: 192.168.1.23 · Default Gateway: 192.168.1.1 (όλα φυσιολογικά).",0],
+  ["Τρέχεις ping 192.168.1.1 (τον router)","Απαντά κανονικά: 4 απαντήσεις, 1 ms.",0],
+  ["Σαρώνεις με antivirus έναν υπολογιστή","Δεν βρέθηκαν απειλές (και πήρε 15 λεπτά…).",0],
+  ["Τηλεφωνείς στον πάροχο Internet","«Υπάρχει αναφερθείσα βλάβη στην περιοχή σας. Αποκατάσταση σε περίπου 2 ώρες.»",1]],
+ diag:[["Χάλασε η κάρτα δικτύου ενός υπολογιστή",0],["Βλάβη στη γραμμή του παρόχου",1],["Ιός στους υπολογιστές",0],["Άλλαξε ο κωδικός του Wi-Fi",0]],
+ solution:"Όλες οι συσκευές βλέπουν τον router (το ping απαντά), αλλά ο router δεν βγαίνει στο Internet (κόκκινο λαμπάκι). Το πρόβλημα είναι έξω από το γραφείο: βλάβη του παρόχου. Κάτι που αφορά ΟΛΟΥΣ δεν οφείλεται σε έναν υπολογιστή. Ενημερώνεις τον πελάτη για τον χρόνο αποκατάστασης και προτείνεις προσωρινά hotspot από κινητό."},
+{title:"4 · Σβήνει μόνος του",ticket:"Γραφίστας: «Ο υπολογιστής σβήνει ξαφνικά μετά από 10–15 λεπτά, κυρίως όταν επεξεργάζομαι βίντεο.»",best:3,
+ checks:[
+  ["Ανοίγεις το Πρόγραμμα προβολής συμβάντων (Event Viewer)","Κρίσιμο σφάλμα «Kernel-Power 41»: το σύστημα έκλεισε απρόσμενα. Δεν λέει γιατί.",1],
+  ["Βλέπεις θερμοκρασίες με το HWiNFO","Ο επεξεργαστής φτάνει 98 °C λίγο πριν σβήσει. Σε ηρεμία είναι 70 °C.",1],
+  ["Ανοίγεις το κουτί και κοιτάς τους ανεμιστήρες","Η ψύκτρα του επεξεργαστή είναι γεμάτη σκόνη. Ο ανεμιστήρας γυρίζει αργά.",1],
+  ["Τρέχεις το Διαγνωστικό μνήμης των Windows","Δεν εντοπίστηκαν σφάλματα στη μνήμη RAM.",0],
+  ["Σαρώνεις με antivirus","Δεν βρέθηκαν απειλές.",0],
+  ["Αλλάζεις καλώδιο ρεύματος","Σβήνει πάλι μετά από 12 λεπτά.",0],
+  ["Επανεγκαθιστάς το πρόγραμμα επεξεργασίας βίντεο","Σβήνει πάλι. Χάθηκε και μισή ώρα.",0]],
+ diag:[["Χαλασμένη μνήμη RAM",0],["Ιός",0],["Υπερθέρμανση από σκόνη στην ψύξη",1],["Χαλασμένο πρόγραμμα βίντεο",0]],
+ solution:"Ο επεξεργαστής υπερθερμαίνεται (98 °C) γιατί η ψύκτρα είναι γεμάτη σκόνη. Όταν ζεσταθεί πολύ, ο υπολογιστής σβήνει για να προστατευτεί. Λύση: καθαρισμός με πεπιεσμένο αέρα και, αν χρειαστεί, νέα θερμοαγώγιμη πάστα. Αυτό είναι και «προληπτική συντήρηση» που περιλαμβάνουν τα συμβόλαια (σελ. 16)."},
+{title:"5 · Ο εκτυπωτής του γραφείου",ticket:"Δικηγορικό γραφείο: «Από χθες κανείς δεν μπορεί να τυπώσει στον εκτυπωτή δικτύου. Χθες το απόγευμα είχαμε διακοπή ρεύματος.»",best:3,
+ checks:[
+  ["Κοιτάς την οθόνη του εκτυπωτή","«Έτοιμος». Χαρτί και μελάνι εντάξει.",0],
+  ["Τυπώνεις σελίδα ρυθμίσεων από το μενού του εκτυπωτή","Τυπώνεται κανονικά. Γράφει: Διεύθυνση IP 192.168.1.57.",1],
+  ["Ανοίγεις την ουρά εκτύπωσης σε έναν υπολογιστή","Πολλές εργασίες σε αναμονή. Κατάσταση εκτυπωτή: «Εκτός σύνδεσης».",1],
+  ["Κοιτάς τη θύρα του εκτυπωτή στις ρυθμίσεις των Windows","Θύρα: 192.168.1.40",1],
+  ["Αλλάζεις το μελάνι","Δεν χρειαζόταν, ήταν στο 70%. Πάλι δεν τυπώνει.",0],
+  ["Επανεκκινείς έναν υπολογιστή","Πάλι «Εκτός σύνδεσης».",0],
+  ["Εγκαθιστάς ξανά τον οδηγό (driver)","Ο οδηγός εγκαταστάθηκε, πάλι «Εκτός σύνδεσης».",0]],
+ diag:[["Τελείωσε το μελάνι",0],["Ο εκτυπωτής πήρε άλλη διεύθυνση IP μετά τη διακοπή ρεύματος",1],["Χάλασε ο εκτυπωτής",0],["Λάθος οδηγός (driver)",0]],
+ solution:"Μετά τη διακοπή ρεύματος ο εκτυπωτής πήρε νέα διεύθυνση IP (.57) από τον router, αλλά οι υπολογιστές στέλνουν ακόμη στην παλιά (.40). Λύση: σταθερή (δεσμευμένη) IP για τον εκτυπωτή. Θα το δούμε αναλυτικά στα Κεφάλαια 4 και 5 (DHCP)."}
+];
+const app=document.getElementById('app');
+function home(){
+ let h='<div class="card"><h2 style="margin-top:0">Ο τεχνικός δεν μαντεύει. Ελέγχει.</h2><p>Στα σενάρια <b>1–2</b> ακολουθείς ένα <b>διάγραμμα ροής</b>: κάνεις τον έλεγχο, διαβάζεις τι βρήκες και απαντάς Ναι ή Όχι.</p><p>Στα σενάρια <b>3–5</b> είσαι μόνος σου: διαλέγεις ποιους ελέγχους θα κάνεις και βγάζεις διάγνωση. Όσο λιγότερους ελέγχους χρειαστείς, τόσο καλύτερα.</p></div><div class="grid">';
+ GUIDED.forEach((s,i)=>h+=`<div class="card sc" onclick="guided(${i})"><span class="tag">Με διάγραμμα ροής</span><h3>${s.title}</h3></div>`);
+ EXPERT.forEach((s,i)=>h+=`<div class="card sc" onclick="expert(${i})"><span class="tag exp">Για ειδικούς</span><h3>${s.title}</h3></div>`);
+ app.innerHTML=h+'</div>';
+}
+function guided(i){
+ const s=GUIDED[i];let cur=s.start,mist=0,path=[];
+ function show(){
+  const n=s.nodes[cur];
+  app.innerHTML=`<div class="card"><div class="ticket"><small>ΑΙΤΗΜΑ ΠΕΛΑΤΗ</small><br>${s.ticket}</div>
+  <div class="node"><div class="diamond"></div><div style="flex:1"><div class="q">${n.q}</div>
+  <button class="btn blue" id="ck">🔍 ${n.check}</button><div id="res"></div></div></div>
+  <div class="path">Διαδρομή: ${path.length?path.join(' → '):'αρχή'}</div></div><button class="btn sec" onclick="home()">← Όλα τα σενάρια</button>`;
+  document.getElementById('ck').onclick=function(){this.disabled=true;
+   document.getElementById('res').innerHTML=`<div class="obs"><b>Τι βλέπεις:</b> ${n.obs}</div><div>Άρα η απάντηση στην ερώτηση είναι:</div><button class="btn" id="y">ΝΑΙ</button><button class="btn no" id="n">ΟΧΙ</button><div id="fb"></div>`;
+   document.getElementById('y').onclick=()=>ans('yes');document.getElementById('n').onclick=()=>ans('no');};
+  function ans(a){
+   if(a!==n.ans){mist++;document.getElementById('fb').innerHTML='<div class="msg bad">Ξαναδιάβασε προσεκτικά τι βλέπεις. Η παρατήρηση δεν ταιριάζει με αυτή την απάντηση.</div>';return}
+   path.push((a==='yes'?'ΝΑΙ':'ΟΧΙ'));const nx=n[a];
+   if(nx==='END') return end(); cur=nx; show();
+  }
+ }
+ function end(){app.innerHTML=`<div class="card"><h2 style="margin-top:0">✔ Βρέθηκε η αιτία!</h2><div class="msg good">${s.solution}</div><p>Έλεγχοι: <b>${path.length}</b> · Λάθος απαντήσεις: <b>${mist}</b></p><p style="color:#64748B">Γράψε στο φύλλο εργασίας την αιτία και τα βήματα που ακολούθησες.</p><button class="btn" onclick="guided(${i})">Ξανά</button> <button class="btn sec" onclick="home()">Όλα τα σενάρια</button></div>`}
+ show();
+}
+function expert(i){
+ const s=EXPERT[i];let used=[],wrong=0,solved=false;
+ function show(){
+  let h=`<div class="card"><div class="ticket"><small>ΑΙΤΗΜΑ ΠΕΛΑΤΗ</small><br>${s.ticket}</div><div class="two"><div><h3 style="margin-top:0">1. Διάλεξε έλεγχο</h3><div class="checks">`;
+  s.checks.forEach((c,k)=>h+=`<button ${used.includes(k)?'disabled':''} onclick="ck(${k})">🔍 ${c[0]}</button>`);
+  h+=`</div></div><div><h3 style="margin-top:0">Τι βρήκες (${used.length} έλεγχοι)</h3><div class="log">`;
+  used.forEach(k=>h+=`<div><b>${s.checks[k][0]}</b>${s.checks[k][1]}</div>`);
+  if(!used.length) h+='<p style="color:#64748B">Δεν έχεις κάνει ακόμη έλεγχο.</p>';
+  h+=`</div></div></div><h3>2. Διάγνωση: ποια είναι η αιτία;</h3><div class="diag">`;
+  s.diag.forEach((d,k)=>h+=`<button id="d${k}" onclick="dg(${k})">${d[0]}</button>`);
+  h+=`</div><div id="fb"></div></div><button class="btn sec" onclick="home()">← Όλα τα σενάρια</button>`;
+  app.innerHTML=h;
+ }
+ window.ck=k=>{used.push(k);show()};
+ window.dg=k=>{
+  if(!used.length){document.getElementById('fb').innerHTML='<div class="msg bad">Κάνε πρώτα έστω έναν έλεγχο. Ο τεχνικός δεν μαντεύει!</div>';return}
+  if(!s.diag[k][1]){wrong++;document.getElementById('d'+k).classList.add('bad');document.getElementById('fb').innerHTML='<div class="msg bad">Όχι. Τα ευρήματά σου δεν στηρίζουν αυτή τη διάγνωση. Κάνε κι άλλον έλεγχο ή ξανασκέψου.</div>';return}
+  const useless=used.filter(u=>!s.checks[u][2]).length;
+  const stars=Math.max(1,3-Math.max(0,used.length-s.best)-wrong);
+  app.innerHTML=`<div class="card"><h2 style="margin-top:0">✔ Σωστή διάγνωση!</h2><div class="big">${'★'.repeat(stars)}${'☆'.repeat(3-stars)}</div>
+  <p>Έλεγχοι: <b>${used.length}</b> (ο καλύτερος τεχνικός χρειάζεται περίπου ${s.best}) · Άχρηστοι έλεγχοι: <b>${useless}</b> · Λάθος διαγνώσεις: <b>${wrong}</b></p>
+  <div class="msg good">${s.solution}</div><p style="color:#64748B">Γράψε στο φύλλο εργασίας τα αστέρια σου και ποιοι έλεγχοι σε οδήγησαν στη λύση.</p>
+  <button class="btn" onclick="expert(${i})">Ξανά</button> <button class="btn sec" onclick="home()">Όλα τα σενάρια</button></div>`;
+ };
+ show();
+}
+home();
+</script></body></html>
